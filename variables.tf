@@ -5,3 +5,8 @@ variable "common_tags" {
     Owner   = "Salman"
   }
 }
+variable "db_password" {
+  description = "Database administrator password"
+  type        = string
+  sensitive   = true
+}
