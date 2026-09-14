@@ -28,7 +28,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.7.5" # Apne version ke hisab se adjust kar sakte ho
+          terraform_version: "1.7.5"
 
       # 3. Configure AWS Credentials using GitHub Secrets
       - name: Configure AWS Credentials
@@ -36,7 +36,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 # Apna region dal dena (e.g., ap-south-1)
+          aws-region: us-east-1
 
       # 4. Terraform Init (Initializes S3 backend and DynamoDB locking)
       - name: Terraform Init
@@ -46,14 +46,17 @@ jobs:
       # 5. Terraform Validate (Checks syntax)
       - name: Terraform Validate
         run: terraform validate
+        working-directory: ./project1
 
       # 6. Terraform Plan (Generates execution plan)
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
+        working-directory: ./project1
         continue-on-error: false
 
       # 7. Terraform Apply (Runs only on Push to master/main branch)
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') && github.event_name == 'push'
         run: terraform apply -auto-approve
+        working-directory: ./project1
