@@ -1,12 +1,10 @@
 # 3-Tier AWS Architecture with Terraform & CI/CD Pipeline
 
-# 3-Tier AWS Architecture with Terraform & CI/CD Pipeline
-
 **Architecture Overview**
 
 ```mermaid
 graph TD
-    User([User / Internet]) -->|HTTP/HTTPS| ALB[Application Load Balancer<br/>Public Subnet]
+    User([User / Internet]) -->|HTTP/HTTPS| ALB[Application Load Balancer]
     
     subgraph VPC [AWS VPC]
         subgraph Public Subnet
@@ -15,17 +13,17 @@ graph TD
         end
         
         subgraph Private Subnet
-            ASG[Auto Scaling Group<br/>EC2 App Instances]
-            RDS[(RDS Database<br/>MySQL / PostgreSQL)]
+            ASG[Auto Scaling Group - EC2]
+            RDS[(RDS Database)]
         end
     end
 
     User -.->|Outbound updates| NAT
-    NAT -.->|Internet Access| Ext[External Repos / Updates]
+    NAT -.->|Internet Access| Ext[External Repos]
 
-    ALB -->|Internal VPC Traffic<br/>Port 80/443| ASG
-    ASG -->|Port 3306/5432<br/>Database Traffic| RDS
-    
+    ALB -->|Internal VPC Traffic| ASG
+    ASG -->|Database Traffic| RDS ``` 
+
 * **Public Subnet:** Houses the Application Load Balancer (ALB) acting as the single internet-facing entry point and the NAT Gateway for outbound traffic routing.
 * **Private Subnet:** Secures the backend application instances inside an Auto Scaling Group (ASG) and the isolated RDS database tier.
 * **Connectivity Flow:** User requests hit the ALB in the public subnet, which proxies traffic directly to the private ASG instances over the internal VPC network, while outbound packages from private instances exit via the NAT Gateway.
