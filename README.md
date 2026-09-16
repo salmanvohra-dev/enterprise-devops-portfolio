@@ -354,12 +354,7 @@ The app also contains 2 custom mongoose plugins that you can attach to any mongo
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
-const userSchema = mongoose.Schema(
-  {
-    /* schema definition here */
-  },
-  { timestamps: true }
-);
+const userSchema = mongoose.Schema({/* schema definition here */}, { timestamps: true });
 
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
