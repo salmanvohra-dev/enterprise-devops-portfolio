@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: ap-south-1
-  IMAGE_NAME: enterprise-node-app
+  IMAGE_NAME: imgstorage
 
 jobs:
   # ==========================================
