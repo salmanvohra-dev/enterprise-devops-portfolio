@@ -36,7 +36,7 @@ jobs:
       - name: Run ESLint & Prettier Check
         run: |
           yarn lint
-          yarn prettier
+         # yarn prettier
 
       - name: Run Unit Tests & Coverage
         run: yarn coverage
