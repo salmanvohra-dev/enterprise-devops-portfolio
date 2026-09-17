@@ -117,7 +117,6 @@ jobs:
           severity: 'HIGH,CRITICAL'
 
   # ==========================================
-  # ==========================================
   # STAGE 4: ARTIFACT SIGNING (COSIGN) - PROJECT 2 FINISHER
   # ==========================================
   artifact-signing:
@@ -149,10 +148,8 @@ jobs:
       - name: Sign the ECR Image with Cosign
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         run: |
           IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build-and-push.outputs.image_digest }}"
           echo "Signing image digest: $IMAGE_URI"
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY "$IMAGE_URI"
           echo "Successfully signed container image with Cosign!"
-####
