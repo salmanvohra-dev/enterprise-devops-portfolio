@@ -117,7 +117,7 @@ jobs:
           severity: 'HIGH,CRITICAL'
 
   # ==========================================
-  # STAGE 4: ARTIFACT SIGNING (COSIGN) - PROJECT 2 FINISHER
+  # STAGE 4: ARTIFACT SIGNING (COSIGN)
   # ==========================================
   artifact-signing:
     name: Sign Image with Cosign
@@ -153,3 +153,28 @@ jobs:
           echo "Signing image digest: $IMAGE_URI"
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY "$IMAGE_URI"
           echo "Successfully signed container image with Cosign!"
+
+  # ==========================================
+  # STAGE 5: AUTOMATED DEPLOYMENT TO AWS EC2 (ASG)
+  # ==========================================
+  deploy-to-aws:
+    name: Deploy to Production EC2
+    needs: [artifact-signing]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Trigger Instance Refresh / Rolling Deployment
+        run: |
+          echo "Triggering Auto Scaling Group instance refresh to pull the latest signed ECR image..."
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "3-tier-app-asg" \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
+          
+          echo "Deployment signal sent successfully! ASG will now perform a rolling update."
