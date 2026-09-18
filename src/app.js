@@ -50,6 +50,11 @@ if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
 
+// Health check route for AWS Load Balancer
+app.get('/healthz', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // v1 api routes
 app.use('/v1', routes);
 
